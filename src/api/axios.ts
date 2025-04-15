@@ -5,16 +5,17 @@ const instance = axios.create({
   withCredentials: true,
   headers: {
     'Content-Type': 'application/json',
+    'Accept': 'application/json'
   },
 });
 
-// preflight 요청 처리
+// 요청 인터셉터
 instance.interceptors.request.use(
   (config) => {
-    // OPTIONS 요청인 경우 헤더 설정
+    // preflight 요청인 경우 CORS 헤더 추가
     if (config.method?.toUpperCase() === 'OPTIONS') {
       config.headers['Access-Control-Request-Method'] = config.method;
-      config.headers['Access-Control-Request-Headers'] = 'Content-Type, Authorization';
+      config.headers['Access-Control-Request-Headers'] = 'Content-Type, Authorization, Accept';
     }
 
     const token = localStorage.getItem('token');
