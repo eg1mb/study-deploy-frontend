@@ -5,7 +5,8 @@ const instance = axios.create({
   withCredentials: true,
   headers: {
     'Content-Type': 'application/json',
-    'Accept': 'application/json'
+    'Accept': 'application/json',
+    'X-Requested-With': 'XMLHttpRequest'  // XMLHttpRequest임을 명시
   },
 });
 
@@ -15,7 +16,7 @@ instance.interceptors.request.use(
     // preflight 요청인 경우 CORS 헤더 추가
     if (config.method?.toUpperCase() === 'OPTIONS') {
       config.headers['Access-Control-Request-Method'] = config.method;
-      config.headers['Access-Control-Request-Headers'] = 'Content-Type, Authorization, Accept';
+      config.headers['Access-Control-Request-Headers'] = 'Content-Type, Authorization, Accept, X-Requested-With';
     }
 
     const token = localStorage.getItem('token');
