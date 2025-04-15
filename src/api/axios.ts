@@ -3,6 +3,7 @@ import type { AxiosError } from 'axios';
 
 const instance = axios.create({
   baseURL: 'https://port-0-study-deploy-backend-m9ihub5nb21ae68f.sel4.cloudtype.app',
+  withCredentials: true,
   headers: {
     'Content-Type': 'application/json',
   },
