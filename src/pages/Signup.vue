@@ -48,7 +48,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
-import { useAuthStore } from '../stores/auth'
+import { useAuthStore } from '@/stores/auth'
 
 const router = useRouter()
 const authStore = useAuthStore()
@@ -57,7 +57,7 @@ const form = ref({
   email: '',
   password: '',
   nickname: '',
-  gender: 'MALE'
+  gender: 'MALE' as 'MALE' | 'FEMALE'
 })
 
 const handleSubmit = async () => {

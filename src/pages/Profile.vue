@@ -74,7 +74,7 @@ import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 import axios from '@/api/axios'
-
+import type { AxiosError } from 'axios'
 const router = useRouter()
 const authStore = useAuthStore()
 const isLoading = ref(false)
@@ -121,11 +121,7 @@ const handleSubmit = async () => {
       gender: form.value.gender
     }
 
-    if (form.value.newPassword) {
-      if (!form.value.currentPassword) {
-        error.value = '현재 비밀번호를 입력해주세요.'
-        return
-      }
+    if (form.value.currentPassword) {
       updateData.currentPassword = form.value.currentPassword
       updateData.newPassword = form.value.newPassword
     }
@@ -136,10 +132,11 @@ const handleSubmit = async () => {
       router.push('/')
     }
   } catch (e) {
-    if (axios.isAxiosError(e)) {
-      if (e.response?.status === 400) {
+    if (e instanceof Error && 'response' in e) {
+      const axiosError = e as AxiosError;
+      if (axiosError.response?.status === 400) {
         error.value = '입력한 정보가 올바르지 않습니다.'
-      } else if (e.response?.status === 401) {
+      } else if (axiosError.response?.status === 401) {
         error.value = '현재 비밀번호가 올바르지 않습니다.'
       } else {
         error.value = '프로필 수정에 실패했습니다. 다시 시도해주세요.'

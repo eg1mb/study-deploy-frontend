@@ -38,7 +38,7 @@ const router = createRouter({
 })
 
 // 네비게이션 가드
-router.beforeEach((to, from, next) => {
+router.beforeEach((to, _from, next) => {
   const token = localStorage.getItem('token')
   const requiresAuth = to.matched.some(record => record.meta.requiresAuth)
 

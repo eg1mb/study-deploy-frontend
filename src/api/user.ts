@@ -1,4 +1,5 @@
 import axios from './axios';
+import type { AxiosError } from 'axios';
 
 export interface UserInfo {
   email: string;
@@ -23,9 +24,10 @@ export const getUserInfo = async (): Promise<UserInfo> => {
     return response.data;
   } catch (error) {
     console.error('getUserInfo 에러:', error);
-    if (error.response) {
-      console.error('에러 응답:', error.response.data);
-      console.error('에러 상태:', error.response.status);
+    if (error instanceof Error && 'response' in error) {
+      const axiosError = error as AxiosError;
+      console.error('에러 응답:', axiosError.response?.data);
+      console.error('에러 상태:', axiosError.response?.status);
     }
     throw error;
   }

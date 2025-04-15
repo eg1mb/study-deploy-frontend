@@ -1,4 +1,5 @@
 import axios from 'axios';
+import type { AxiosError } from 'axios';
 
 const instance = axios.create({
   baseURL: 'https://port-0-study-deploy-backend-m9ihub5nb21ae68f.sel4.cloudtype.app',
@@ -6,6 +7,9 @@ const instance = axios.create({
     'Content-Type': 'application/json',
   },
 });
+
+// Add isAxiosError method to the instance
+(instance as any).isAxiosError = axios.isAxiosError;
 
 // 요청 인터셉터
 instance.interceptors.request.use(
@@ -37,9 +41,12 @@ instance.interceptors.response.use(
   },
   (error) => {
     console.error('응답 에러:', error);
-    if (error.response?.status === 401) {
-      localStorage.removeItem('token');
-      window.location.href = '/login';
+    if (error instanceof Error && 'response' in error) {
+      const axiosError = error as AxiosError;
+      if (axiosError.response?.status === 401) {
+        localStorage.removeItem('token');
+        window.location.href = '/login';
+      }
     }
     return Promise.reject(error);
   }
