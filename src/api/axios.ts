@@ -8,9 +8,15 @@ const instance = axios.create({
   },
 });
 
-// 요청 인터셉터
+// preflight 요청 처리
 instance.interceptors.request.use(
   (config) => {
+    // OPTIONS 요청인 경우 헤더 설정
+    if (config.method?.toUpperCase() === 'OPTIONS') {
+      config.headers['Access-Control-Request-Method'] = config.method;
+      config.headers['Access-Control-Request-Headers'] = 'Content-Type, Authorization';
+    }
+
     const token = localStorage.getItem('token');
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
