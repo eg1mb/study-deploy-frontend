@@ -2,10 +2,8 @@ import axios from 'axios';
 import type { AxiosError } from 'axios';
 
 const instance = axios.create({
-
   baseURL: 'https://port-0-study-deploy-backend-m9ihub5nb21ae68f.sel4.cloudtype.app',
   withCredentials: true,
-
   headers: {
     'Content-Type': 'application/json',
   },
@@ -20,6 +18,10 @@ instance.interceptors.request.use(
     const token = localStorage.getItem('token');
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
+      // CORS 문제 디버깅을 위한 콘솔 로그
+      console.log('토큰이 요청에 포함됨:', token.substring(0, 10) + '...');
+    } else {
+      console.log('토큰이 없음, Authorization 헤더 추가되지 않음');
     }
     
     console.log('요청 URL:', config.url);
@@ -40,16 +42,23 @@ instance.interceptors.response.use(
   (response) => {
     console.log('응답 상태:', response.status);
     console.log('응답 데이터:', response.data);
+    // CORS 응답 헤더 확인을 위한 로깅 추가
+    console.log('응답 헤더:', response.headers);
     return response;
   },
   (error) => {
     console.error('응답 에러:', error);
-    if (error instanceof Error && 'response' in error) {
-      const axiosError = error as AxiosError;
-      if (axiosError.response?.status === 401) {
+    if (error.response) {
+      console.error('에러 응답 상태:', error.response.status);
+      console.error('에러 응답 데이터:', error.response.data);
+      console.error('에러 응답 헤더:', error.response.headers);
+      
+      if (error.response.status === 401) {
         localStorage.removeItem('token');
         window.location.href = '/login';
       }
+    } else {
+      console.error('응답이 없는 에러 (네트워크 오류 가능성):', error.message);
     }
     return Promise.reject(error);
   }
